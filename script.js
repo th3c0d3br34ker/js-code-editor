@@ -62,10 +62,11 @@ document.getElementById('runBtn').addEventListener('click', function () {
     outputPanel.classList.add('open');
   };
 
-  const checkCode = checkUserCode(userCode);
-  if (checkCode) {
-    window.parent.postMessage({ name: 'embedEvent', data: 'PASSED' }, '*');
-  }
+  checkUserCode(userCode, (passed) => {
+    if (passed) {
+      window.parent.postMessage({ name: 'embedEvent', data: 'PASSED' }, '*');
+    }
+  });
 });
 
 // Handling the close button

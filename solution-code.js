@@ -13,9 +13,7 @@ const passedTests = [
 
 const passedAll = passedTests.every(([input, expected]) => kadaneAlgo(input) === expected);
 
-if (passedAll) {
-  console.log("All tests passed!");
-}
+passedAll ? 'All tests passed!' : 'Some tests failed!';
 `;
 
 LEVEL_1_CODE = `
@@ -127,39 +125,52 @@ function renderDifficultyLevel() {
   difficultyLevelElement.style.marginBottom = '20px';
 }
 
-function checkUserCode(userCode) {
+function checkUserCode(userCode, callback) {
   try {
-    // attach the runner code and tests to the user code
-    const code = userCode + RUNNER_CODE_AND_TESTS;
+    // Attach the runner code and tests to the user code
+    const codeToRun = userCode + RUNNER_CODE_AND_TESTS;
 
-    // Create a blob from the code
-    const blob = new Blob([code], { type: 'application/javascript' });
+    // Create the worker code
+    const workerCode = `
+      self.onmessage = function(event) {
+        const codeToRun = event.data;
+        let result;
+        try {
+          result = eval(codeToRun);
+          self.postMessage({ result: result });
+        } catch (error) {
+          self.postMessage({ error: error.toString() });
+        }
+      };
+    `;
+
+    // Create a blob from the worker code
+    const blob = new Blob([workerCode], { type: 'application/javascript' });
 
     // Create a worker from the blob
     const worker = new Worker(URL.createObjectURL(blob));
 
-    // Post a message to the worker
-    worker.postMessage(blob);
+    worker.postMessage(codeToRun);
 
     // Handle the message from the worker
     worker.onmessage = function (event) {
-      // Get the result and error from the worker
       const { result, error } = event.data;
 
       if (error) {
-        console.error('Error in user code:', error);
-        return false;
+        callback(false);
+        return;
       }
 
-      // if the user code passes all the tests
-      if (result === 'All tests passed!') {
-        return true;
+      // Check if all tests passed
+      if (result.includes('All tests passed!')) {
+        callback(true);
+        return;
       }
 
-      return false;
+      callback(false);
     };
   } catch (error) {
     console.error('Error in user code:', error);
-    return false;
+    callback(false);
   }
 }
