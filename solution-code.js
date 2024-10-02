@@ -23,6 +23,8 @@ function kadaneAlgo(arr) {
     // function definition
     console.log('Level 1: Only function definition');
 }
+
+kadaneAlgo([1, 2, 3]);
 `;
 
 LEVEL_2_CODE = `
@@ -42,6 +44,8 @@ function kadaneAlgo(arr) {
     }
     console.log("Level 3: After loop, currentSum:", currentSum);
 }
+
+kadaneAlgo([1, 2, 3]);
 `;
 
 LEVEL_4_CODE = `
@@ -67,6 +71,8 @@ function kadaneAlgo(arr) {
     console.log("Level 5: Final Max Sum (before return):", maxSum);
     // return maxSum;
 }
+
+kadaneAlgo([1, 2, 3]);
 `;
 
 let difficulty_level = 1;
@@ -146,7 +152,7 @@ function checkUserCode(userCode) {
       }
 
       // if the user code passes all the tests
-      if (result === 'All tests passed!' && difficulty_level !== 5) {
+      if (result === 'All tests passed!') {
         return true;
       }
 
