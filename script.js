@@ -8,7 +8,7 @@ require(['vs/editor/editor.main'], function () {
   window.editor = monaco.editor.create(document.getElementById('editor'), {
     value: '// Enter JavaScript code here',
     language: 'javascript',
-    theme: 'vs-dark',
+    theme: 'vs-light',
     automaticLayout: true, // Automatically adjust the layout on window resize
   });
 
@@ -17,7 +17,6 @@ require(['vs/editor/editor.main'], function () {
     monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS,
     function () {
       editor.getAction('editor.action.formatDocument').run();
-      // alert('Code formatted! (You can implement saving logic here)');
     }
   );
 });
@@ -58,6 +57,8 @@ document.getElementById('runBtn').addEventListener('click', function () {
     const outputPanel = document.getElementById('outputPanel');
     outputPanel.classList.add('open');
   };
+
+  window.parent.postMessage({ name: 'embedEvent', data: 'PASSED' }, '*');
 });
 
 // Handling the close button
@@ -66,7 +67,8 @@ document.getElementById('closeBtn').addEventListener('click', function () {
   outputPanel.classList.remove('open');
 });
 
-// Handling the Get Help button
-document.getElementById('helpBtn').addEventListener('click', function () {
-  alert('Help is on the way!');
+// Handling the Give Up button
+document.getElementById('giveUpBtn').addEventListener('click', function () {
+  const userCode = window.editor.getValue();
+  window.parent.postMessage({ name: 'embedEvent', data: userCode }, '*');
 });
