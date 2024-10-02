@@ -9,7 +9,17 @@ require(['vs/editor/editor.main'], function () {
     value: '// Enter JavaScript code here',
     language: 'javascript',
     theme: 'vs-dark',
+    automaticLayout: true, // Automatically adjust the layout on window resize
   });
+
+  // Capture Ctrl+S (or Cmd+S on Mac) and format the code
+  window.editor.addCommand(
+    monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS,
+    function () {
+      editor.getAction('editor.action.formatDocument').run();
+      // alert('Code formatted! (You can implement saving logic here)');
+    }
+  );
 });
 
 // Web worker code as a blob
@@ -37,12 +47,23 @@ document.getElementById('runBtn').addEventListener('click', function () {
 
   worker.onmessage = function (event) {
     const { result, error } = event.data;
+    const outputContent = document.getElementById('outputContent');
     if (error) {
-      console.error('Error:', error);
+      outputContent.innerHTML = `<pre>Error: ${error}</pre>`;
     } else {
-      console.log('Result:', result);
+      outputContent.innerHTML = `<pre>Output: ${result}</pre>`;
     }
+
+    // Show the sliding plane
+    const outputPanel = document.getElementById('outputPanel');
+    outputPanel.classList.add('open');
   };
+});
+
+// Handling the close button
+document.getElementById('closeBtn').addEventListener('click', function () {
+  const outputPanel = document.getElementById('outputPanel');
+  outputPanel.classList.remove('open');
 });
 
 // Handling the Get Help button
