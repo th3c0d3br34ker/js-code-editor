@@ -4,6 +4,7 @@ require.config({
     vs: 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.33.0/min/vs',
   },
 });
+
 require(['vs/editor/editor.main'], function () {
   window.editor = monaco.editor.create(document.getElementById('editor'), {
     value: '// Enter JavaScript code here',
@@ -19,6 +20,9 @@ require(['vs/editor/editor.main'], function () {
       editor.getAction('editor.action.formatDocument').run();
     }
   );
+
+  renderDifficultyLevel();
+  setDifficultyLevel(1);
 });
 
 // Web worker code as a blob
@@ -58,7 +62,10 @@ document.getElementById('runBtn').addEventListener('click', function () {
     outputPanel.classList.add('open');
   };
 
-  window.parent.postMessage({ name: 'embedEvent', data: 'PASSED' }, '*');
+  const checkCode = checkUserCode(userCode);
+  if (checkCode) {
+    window.parent.postMessage({ name: 'embedEvent', data: 'PASSED' }, '*');
+  }
 });
 
 // Handling the close button
